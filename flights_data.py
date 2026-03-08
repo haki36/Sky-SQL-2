@@ -18,6 +18,15 @@ QUERY_FLIGHT_BY_DATE = (
     "AND flights.YEAR = :year"
 )
 
+QUERY_DELAYED_FLIGHTS_BY_AIRLINE = (
+    "SELECT flights.*, airlines.airline, flights.ID as FLIGHT_ID, "
+    "flights.DEPARTURE_DELAY as DELAY "
+    "FROM flights "
+    "JOIN airlines ON flights.airline = airlines.id "
+    "WHERE flights.DEPARTURE_DELAY >= 20 "
+    "AND airlines.AIRLINE = :name"
+)
+
 # Define the database URL
 DATABASE_URL = "sqlite:///data/flights.sqlite3"
 
@@ -61,3 +70,12 @@ def get_flights_by_date(flight_day, flight_month,flight_year):
               'month': flight_month,
               'year': flight_year}
     return execute_query(QUERY_FLIGHT_BY_DATE, params)
+
+
+def get_delayed_flights_by_airline(airline_name):
+    """
+    Searches for delayed flights by airline name.
+    Returns a list of matching flight records with a departure delay of at least 20 minutes.
+    """
+    params = {'name': airline_name}
+    return execute_query(QUERY_DELAYED_FLIGHTS_BY_AIRLINE, params)
