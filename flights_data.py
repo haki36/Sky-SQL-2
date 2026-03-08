@@ -24,7 +24,17 @@ QUERY_DELAYED_FLIGHTS_BY_AIRLINE = (
     "FROM flights "
     "JOIN airlines ON flights.airline = airlines.id "
     "WHERE flights.DEPARTURE_DELAY >= 20 "
-    "AND airlines.AIRLINE = :name"
+    "AND airlines.AIRLINE = :airline_name"
+)
+
+QUERY_DELAYED_FLIGHTS_BY_AIRPORT = (
+    "SELECT flights.*, airlines.airline, flights.ID as FLIGHT_ID, "
+    "flights.DEPARTURE_DELAY as DELAY "
+    "FROM flights "
+    "JOIN airports ON flights.ORIGIN_AIRPORT = airports.IATA_CODE "
+    "JOIN airlines ON flights.AIRLINE = airlines.ID "
+    "WHERE flights.DEPARTURE_DELAY >= 20 "
+    "AND airports.IATA_CODE = :airport_name"
 )
 
 # Define the database URL
@@ -77,5 +87,14 @@ def get_delayed_flights_by_airline(airline_name):
     Searches for delayed flights by airline name.
     Returns a list of matching flight records with a departure delay of at least 20 minutes.
     """
-    params = {'name': airline_name}
+    params = {'airline_name': airline_name}
     return execute_query(QUERY_DELAYED_FLIGHTS_BY_AIRLINE, params)
+
+
+def get_delayed_flights_by_airport(airport_code):
+    """
+    Searches for delayed flights by origin airport code.
+    Returns a list of matching flight records with a departure delay of at least 20 minutes.
+    """
+    params = {'airport_name': airport_code}
+    return execute_query(QUERY_DELAYED_FLIGHTS_BY_AIRPORT, params)
