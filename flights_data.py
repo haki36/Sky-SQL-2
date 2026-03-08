@@ -17,8 +17,11 @@ def execute_query(query, params):
     """
     try:
         with engine.connect() as conn:
-            # your code here
-            pass
+            results = conn.execute(text(query), params)
+            # rows = results.mappings().all()
+            rows = results.fetchall()
+        return rows
+
     except Exception as e:
         print("Query error:", e)
         return []
@@ -31,4 +34,3 @@ def get_flight_by_id(flight_id):
     """
     params = {'id': flight_id}
     return execute_query(QUERY_FLIGHT_BY_ID, params)
-
