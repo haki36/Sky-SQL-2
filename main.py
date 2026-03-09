@@ -1,7 +1,8 @@
-import flights_data
 from datetime import datetime
 import sqlalchemy
 import csv
+import flights_data
+
 
 IATA_LENGTH = 3
 
@@ -72,7 +73,7 @@ def flights_by_date():
 def ask_export_to_csv(results):
     """
     Ask the user whether the results should be exported to a CSV file.
-    If yes, prompt for a file name.
+    If yes, prompt for a file name and write the results to a CSV file.
     """
     while True:
         answer = input("Would you like to export this data to a CSV file? (y/n) ").strip().lower()
@@ -117,7 +118,8 @@ def print_results(results):
 
         # Check that all required columns are in place
         try:
-            delay = int(result['DELAY']) if result['DELAY'] else 0  # If delay columns is NULL, set it to 0
+            # If delay columns is NULL, set it to 0
+            delay = int(result['DELAY']) if result['DELAY'] else 0
             origin = result['ORIGIN_AIRPORT']
             dest = result['DESTINATION_AIRPORT']
             airline = result['AIRLINE']
