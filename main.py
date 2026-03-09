@@ -1,6 +1,7 @@
 import flights_data
 from datetime import datetime
 import sqlalchemy
+import csv
 
 IATA_LENGTH = 3
 
@@ -68,6 +69,40 @@ def flights_by_date():
     print_results(results)
 
 
+def ask_export_to_csv(results):
+    """
+    Ask the user whether the results should be exported to a CSV file.
+    If yes, prompt for a file name.
+    """
+    while True:
+        answer = input("Would you like to export this data to a CSV file? (y/n) ").strip().lower()
+
+        if answer == "n":
+            return
+
+        if answer == 'y':
+            filename = input("Enter file name: ").strip()
+
+            if not filename.endswith(".csv"):
+                filename += ".csv"
+
+            if not results:
+                print("No data to export.")
+                return
+            data_list = [dict(result._mapping) for result in results]
+            fieldnames = data_list[0].keys()
+
+            with open(filename, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(data_list)
+
+            print(f"Data exported to {filename}")
+            return
+
+        print("Try again...")
+
+
 def print_results(results):
     """
     Get a list of flight results (List of dictionary-like objects from SQLAachemy).
@@ -95,6 +130,8 @@ def print_results(results):
             print(f"{result['ID']}. {origin} -> {dest} by {airline}, Delay: {delay} Minutes")
         else:
             print(f"{result['ID']}. {origin} -> {dest} by {airline}")
+
+    ask_export_to_csv(results)
 
 
 def show_menu_and_get_input():
